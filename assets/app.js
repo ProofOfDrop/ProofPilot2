@@ -182,4 +182,5 @@ function setText(id, text) { const el = document.getElementById(id); if (el) el.
 function setHTML(id, html) { const el = document.getElementById(id); if (el) el.innerHTML = html; }
 function setDisabled(id, state) { const el = document.getElementById(id); if (el) el.disabled = state; }
 function show(id) { const el = document.getElementById(id); if (el) el.classList.remove('d-none'); }
-function hide(id) { const el = document.getElementById(id); if (el)
+function hide(id) { const el = document.getElementById(id); if (el) }
+                  
