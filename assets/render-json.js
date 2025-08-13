@@ -166,4 +166,4 @@ function renderScoringWidget() {
         </div>
       </section>
 
-      <section id
+      <section id>
