@@ -174,7 +174,10 @@ async function safeGetChainId(p) {
   return net.chainId;
 }
 
-// --- Utility functions ---
+// --- Data fetchers and scoring (unchanged) ---
+// (Ensure you included all fetch functions and scoring functions here as in prior versions.)
+
+// --- Utility helpers ---
 function getChainName(id) { return CHAIN_MAP[id]?.name || `Chain ${id}`; }
 function shorten(addr) { return addr ? `${addr.slice(0, 6)}…${addr.slice(-4)}` : ''; }
 function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
@@ -182,5 +185,10 @@ function setText(id, text) { const el = document.getElementById(id); if (el) el.
 function setHTML(id, html) { const el = document.getElementById(id); if (el) el.innerHTML = html; }
 function setDisabled(id, state) { const el = document.getElementById(id); if (el) el.disabled = state; }
 function show(id) { const el = document.getElementById(id); if (el) el.classList.remove('d-none'); }
-function hide(id) { const el = document.getElementById(id); if (el) }
-                  
+function hide(id) { const el = document.getElementById(id); if (el) el.classList.add('d-none'); }
+function setBadge(id, text, klass) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = text;
+  el.className = `badge ${klass}`;
+}
