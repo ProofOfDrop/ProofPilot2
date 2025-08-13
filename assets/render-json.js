@@ -3,7 +3,7 @@ async function loadProofdropContent() {
     const res = await fetch('proofdrop.json', { cache: 'no-store' });
     const { page } = await res.json();
 
-    // Apply theme from JSON
+    // Theme
     const root = document.documentElement;
     if (page?.theme?.primaryColor) root.style.setProperty('--primary', page.theme.primaryColor);
     if (page?.theme?.backgroundColor) root.style.setProperty('--bg', page.theme.backgroundColor);
@@ -23,19 +23,13 @@ async function loadProofdropContent() {
     for (const section of page.sections) {
       if (section.type === 'how_it_works') {
         appEl.insertAdjacentHTML('beforeend', renderHowItWorks(section));
-
-        // Inject dApp widget right after
         appEl.insertAdjacentHTML('beforeend', renderScoringWidget());
-
-        // Init modal after widget exists and bind button handlers
         initWeb3Modal();
         bindWidgetHandlers();
-
       } else {
         appEl.insertAdjacentHTML('beforeend', renderSection(section));
       }
     }
-
     bindCTAActions();
   } catch (err) {
     console.error('Failed to load proofdrop.json', err);
@@ -44,23 +38,15 @@ async function loadProofdropContent() {
   }
 }
 
-// --- Section renderers ---
 function renderSection(section) {
   switch (section.type) {
-    case 'hero':
-      return renderHero(section);
-    case 'section':
-      return renderTextSection(section);
-    case 'badge_preview':
-      return renderBadges(section);
-    case 'leaderboard_preview':
-      return renderLeaderboardPreview(section);
-    case 'cta':
-      return renderCTA(section);
-    case 'footer':
-      return renderFooter(section);
-    default:
-      return '';
+    case 'hero': return renderHero(section);
+    case 'section': return renderTextSection(section);
+    case 'badge_preview': return renderBadges(section);
+    case 'leaderboard_preview': return renderLeaderboardPreview(section);
+    case 'cta': return renderCTA(section);
+    case 'footer': return renderFooter(section);
+    default: return '';
   }
 }
 
@@ -125,7 +111,6 @@ function renderFooter(s) {
   return `<section class="footer"><div>${links}</div><div class="small">${escapeHTML(s.copyright)}</div></section>`;
 }
 
-// --- Inject dApp widget ---
 function renderScoringWidget() {
   return `
     <section class="section">
@@ -166,4 +151,40 @@ function renderScoringWidget() {
         </div>
       </section>
 
-      <section id>
+      <section id="signatureSection" class="mt-4 d-none">
+        <h2 class="h5 mb-2">Signed verification</h2>
+        <div class="card card-translucent p-3">
+          <div class="mb-2"><strong>Message:</strong></div>
+          <pre id="signedMessage" class="small mb-3"></pre>
+          <div class="mb-2"><strong>Signature:</strong></div>
+          <pre id="signature" class="small mb-3"></pre>
+          <div><strong>Verified:</strong> <span id="verified" class="badge bg-secondary">No</span></div>
+        </div>
+      </section>
+    </section>
+  `;
+}
+
+function bindWidgetHandlers() {
+  const connectBtn = document.getElementById('connectBtn');
+  const fetchBtn = document.getElementById('fetchBtn');
+  const mintBtn = document.getElementById('mintBtn');
+  if (connectBtn) connectBtn.addEventListener('click', (e) => { e.preventDefault(); window.onConnect && window.onConnect(); });
+  if (fetchBtn) fetchBtn.addEventListener('click', (e) => { e.preventDefault(); window.onFetch && window.onFetch(); });
+  if (mintBtn) mintBtn.addEventListener('click', (e) => { e.preventDefault(); window.onMint && window.onMint(); });
+}
+
+function bindCTAActions() {
+  document.querySelectorAll('[data-action="connect_wallet"]').forEach(el => {
+    el.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.onConnect && window.onConnect();
+    });
+  });
+}
+
+function escapeHTML(s) {
+  return (s || '').toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+document.addEventListener('DOMContentLoaded', loadProofdropContent);
